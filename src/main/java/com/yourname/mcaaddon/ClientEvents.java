@@ -46,7 +46,7 @@ public class ClientEvents {
                         0.5f, 0.5f);
 
                 player.displayClientMessage(
-                        net.minecraft.network.chat.Component.literal("Humanity restored..."), true
+                        net.minecraft.network.chat.Component.literal("You take on a mortal guise..."), true
                 );
             }
 
@@ -86,21 +86,27 @@ public class ClientEvents {
                 player.noPhysics = false;
             }
 
-            // --- AMBIENT VISUAL EFFECTS (New Code!) ---
-            // Only happens sometimes so it isn't visually overwhelming (approx 5 particles a second)
-            if (Math.random() < 0.2) {
+            // --- AMBIENT VISUAL EFFECTS (Upgraded Code!) ---
+// Always ensure this visual effect ONLY triggers while transformed
+            if (isReaperFormActive) {
+                // A loop of 3 guaranteed particles per tick for a truly dense, shadowy aura
+                for (int i = 0; i < 2; i++) {
 
-                // Calculates a random location strictly circling around your towering Hitbox body!
-                double pX = player.getX() + (Math.random() - 0.5) * 1.5;
-                double pY = player.getY() + (Math.random() * 2.8); // Floats upward within your 2.8 Block tall body
-                double pZ = player.getZ() + (Math.random() - 0.5) * 1.5;
+                    // Keeps the effects localized around your taller Reaper Hitbox body
+                    double pX = player.getX() + (Math.random() - 0.5) * 1.5;
+                    double pY = player.getY() + (Math.random() * 2.8);
+                    double pZ = player.getZ() + (Math.random() - 0.5) * 1.5;
 
-                // Adds a tiny trace of grey/black ghostly ash smoke
-                player.level().addParticle(net.minecraft.core.particles.ParticleTypes.SMOKE, pX, pY, pZ, 0, 0.01, 0);
-
-                // Occasionally tosses out a blue shrieking soul particle drifting straight upwards
-                if (Math.random() < 0.3) {
-                    player.level().addParticle(net.minecraft.core.particles.ParticleTypes.SOUL, pX, pY, pZ, 0, 0.04, 0);
+                    // Creates a 50/50 randomized mix of Spooky Blue Soul Magic & Black Ash Smoke
+                    if (Math.random() > 0.5) {
+                        player.level().addParticle(net.minecraft.core.particles.ParticleTypes.SOUL,
+                                pX, pY, pZ,
+                                0, 0.05, 0); // Light speed pushing it slowly upward
+                    } else {
+                        player.level().addParticle(net.minecraft.core.particles.ParticleTypes.LARGE_SMOKE,
+                                pX, pY, pZ,
+                                0, 0.02, 0);
+                    }
                 }
             }
         }
